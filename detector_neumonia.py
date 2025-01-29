@@ -3,24 +3,28 @@
 
 import os
 os.environ['PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION'] = 'python'
+import tensorflow as tf
 
-# Importaciones de las capas
+# ✅ Habilitar Eager Execution antes de importar cualquier otro módulo
+tf.compat.v1.enable_eager_execution()  
+print("🔹 Eager Execution habilitado:", tf.executing_eagerly())
+
+# Configuración de TensorFlow para GPU
+tf.compat.v1.experimental.output_all_intermediates(True)
+
+# Importaciones de las capas de la aplicación
 from infrastructure.ml.cnn_model import PneumoniaCNN
 from infrastructure.image.image_preprocessor import XrayPreprocessor
 from infrastructure.image.dicom_reader import DicomReader
 from application.services.diagnosis_service import DiagnosisService
 from Presentation.gui.main_window import PneumoniaDetectorGUI
-from domain.entities.chest_xray import ChestXray
 
-class ApplicationFactory:
-    """Fábrica para crear e inicializar los componentes de la aplicación"""
-    
-    @staticmethod
-    def create_services():
-        # Inicializar componentes de infraestructura
-        model_service = PneumoniaCNN('conv_MLP_84.h5')
+def setup_services():
+    """Inicializa y configura todos los servicios necesarios"""
+    try:
+        # Inicializar servicios de infraestructura
+        model_service = PneumoniaCNN('./model/conv_MLP_84.h5')
         image_processor = XrayPreprocessor()
-        dicom_reader = DicomReader()
         
         # Crear servicio de diagnóstico
         diagnosis_service = DiagnosisService(
@@ -28,21 +32,19 @@ class ApplicationFactory:
             image_processor=image_processor
         )
         
-        return {
-            'diagnosis_service': diagnosis_service,
-            'dicom_reader': dicom_reader
-        }
+        return diagnosis_service
+        
+    except Exception as e:
+        print(f"Error al configurar servicios: {str(e)}")
+        raise
 
 def setup_logging():
-    """Configurar el sistema de logging"""
+    """Configura el sistema de logging"""
     import logging
     logging.basicConfig(
         level=logging.INFO,
         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-        handlers=[
-            logging.FileHandler('pneumonia_detector.log'),
-            logging.StreamHandler()
-        ]
+        filename='pneumonia_detector.log'
     )
 
 def main():
@@ -51,14 +53,11 @@ def main():
         # Configurar logging
         setup_logging()
         
-        # Crear servicios
-        services = ApplicationFactory.create_services()
+        # Configurar servicios
+        diagnosis_service = setup_services()
         
         # Iniciar interfaz gráfica
-        app = PneumoniaDetectorGUI(
-            diagnosis_service=services['diagnosis_service'],
-            dicom_reader=services['dicom_reader']
-        )
+        app = PneumoniaDetectorGUI(diagnosis_service=diagnosis_service)
         
         # Ejecutar la aplicación
         app.run()
@@ -66,6 +65,7 @@ def main():
     except Exception as e:
         import logging
         logging.error(f"Error en la aplicación: {str(e)}", exc_info=True)
+        print(f"Error: {str(e)}")
         raise
 
 if __name__ == "__main__":
