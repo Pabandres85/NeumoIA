@@ -9,6 +9,19 @@ import tkcap
 import csv
 from datetime import datetime
 
+def resize_image(image, size):
+    """Función auxiliar para redimensionar imágenes con compatibilidad entre versiones de Pillow"""
+    try:
+        # Para versiones nuevas de Pillow
+        return image.resize(size, Image.Resampling.LANCZOS)
+    except AttributeError:
+        try:
+            # Para versiones antiguas de Pillow
+            return image.resize(size, Image.ANTIALIAS)
+        except AttributeError:
+            # Fallback para versiones muy recientes
+            return image.resize(size, Image.LANCZOS)
+
 class PneumoniaDetectorGUI:
     def __init__(self, diagnosis_service: DiagnosisService):
         """Inicializa la interfaz gráfica del detector de neumonía"""
@@ -24,16 +37,11 @@ class PneumoniaDetectorGUI:
         self.root.geometry("815x560")
         self.root.resizable(0, 0)
         
-        # Configurar fuentes y estilos
         self._setup_styles()
-        
-        # Configurar todos los elementos
         self._setup_labels()
         self._setup_entries()
         self._setup_image_displays()
         self._setup_buttons()
-        
-        # Configurar layout
         self._setup_layout()
 
     def _setup_styles(self):
@@ -77,17 +85,13 @@ class PneumoniaDetectorGUI:
 
     def _setup_entries(self):
         """Configura los campos de entrada"""
-        # Variables de control
         self.patient_id_var = tk.StringVar()
-        
-        # Campos de entrada
         self.patient_id_entry = ttk.Entry(
             self.root,
             textvariable=self.patient_id_var,
             width=10
         )
         
-        # Campos de texto para resultados
         self.result_text = tk.Text(self.root, width=10, height=1)
         self.probability_text = tk.Text(self.root, width=10, height=1)
 
@@ -129,7 +133,6 @@ class PneumoniaDetectorGUI:
 
     def _setup_layout(self):
         """Configura la disposición de los elementos en la interfaz"""
-        # Posicionar etiquetas
         self.labels['title'].place(x=122, y=25)
         self.labels['xray'].place(x=110, y=65)
         self.labels['heatmap'].place(x=545, y=65)
@@ -137,16 +140,13 @@ class PneumoniaDetectorGUI:
         self.labels['patient_id'].place(x=65, y=350)
         self.labels['probability'].place(x=500, y=400)
         
-        # Posicionar campos de entrada y texto
         self.patient_id_entry.place(x=200, y=350)
         self.result_text.place(x=610, y=350, width=90, height=30)
         self.probability_text.place(x=610, y=400, width=90, height=30)
         
-        # Posicionar áreas de imagen
         self.xray_display.place(x=65, y=90)
         self.heatmap_display.place(x=500, y=90)
         
-        # Posicionar botones
         self.buttons['load'].place(x=70, y=460)
         self.buttons['predict'].place(x=220, y=460)
         self.buttons['save'].place(x=370, y=460)
@@ -156,12 +156,10 @@ class PneumoniaDetectorGUI:
     def _load_image(self):
         """Maneja la carga de imágenes"""
         try:
-            # Verificar ID del paciente
             if not self.patient_id_var.get().strip():
                 messagebox.showwarning("Advertencia", "Por favor, ingrese la cédula del paciente")
                 return
 
-            # Seleccionar archivo
             filepath = filedialog.askopenfilename(
                 initialdir="/",
                 title="Seleccionar imagen",
@@ -174,30 +172,24 @@ class PneumoniaDetectorGUI:
             )
 
             if filepath:
-                # Crear objeto ChestXray
                 self.current_image = ChestXray.from_file(
                     patient_id=self.patient_id_var.get(),
                     file_path=filepath
                 )
                 
-                # Mostrar imagen en la interfaz
                 img_pil = self.current_image.to_pil_image()
-                img_pil = img_pil.resize((250, 250), Image.ANTIALIAS)
+                img_pil = resize_image(img_pil, (250, 250))
                 img_tk = ImageTk.PhotoImage(img_pil)
                 
-                # Limpiar display anterior
                 self.xray_display.delete("1.0", tk.END)
-                
-                # Insertar nueva imagen
                 self.xray_display.image_create(tk.END, image=img_tk)
-                self.xray_display.image = img_tk  # Mantener referencia
+                self.xray_display.image = img_tk
                 
-                # Habilitar botón de predicción
                 self.buttons['predict']['state'] = 'normal'
 
         except Exception as e:
             messagebox.showerror("Error", f"Error al cargar la imagen: {str(e)}")
-            print(f"Error detallado: {str(e)}")  # Para debugging
+            print(f"Error detallado: {str(e)}")
 
     def _predict(self):
         """Realiza la predicción de la imagen"""
@@ -206,28 +198,25 @@ class PneumoniaDetectorGUI:
             return
             
         try:
-            # Obtener diagnóstico
             result = self._diagnosis_service.create_diagnosis(self.current_image)
             
-            # Mostrar resultados
             self.result_text.delete(1.0, tk.END)
             self.result_text.insert(tk.END, result.prediction_type.value)
             
             self.probability_text.delete(1.0, tk.END)
             self.probability_text.insert(tk.END, f"{result.probability:.2f}%")
             
-            # Mostrar heatmap
             heatmap_pil = Image.fromarray(result.heatmap)
-            heatmap_pil = heatmap_pil.resize((250, 250), Image.ANTIALIAS)
+            heatmap_pil = resize_image(heatmap_pil, (250, 250))
             heatmap_tk = ImageTk.PhotoImage(heatmap_pil)
             
             self.heatmap_display.delete(1.0, tk.END)
             self.heatmap_display.image_create(tk.END, image=heatmap_tk)
-            self.heatmap_display.image = heatmap_tk  # Mantener referencia
+            self.heatmap_display.image = heatmap_tk
             
         except Exception as e:
             messagebox.showerror("Error", f"Error en la predicción: {str(e)}")
-            print(f"Error detallado: {str(e)}")  # Para debugging
+            print(f"Error detallado: {str(e)}")
 
     def _save_results(self):
         """Guarda los resultados en un archivo CSV"""
@@ -257,12 +246,10 @@ class PneumoniaDetectorGUI:
                 messagebox.showwarning("Advertencia", "No hay resultados para generar PDF.")
                 return
 
-            # Capturar la ventana
             cap = tkcap.CAP(self.root)
             image_path = f"Reporte{self.report_counter}.jpg"
             cap.capture(image_path)
             
-            # Convertir a PDF
             img = Image.open(image_path)
             img = img.convert('RGB')
             pdf_path = f"Reporte{self.report_counter}.pdf"
@@ -278,19 +265,13 @@ class PneumoniaDetectorGUI:
         """Limpia todos los campos del formulario"""
         if messagebox.askokcancel("Confirmar", "¿Desea borrar todos los datos?"):
             try:
-                # Limpiar campos de texto
                 self.patient_id_var.set("")
                 self.result_text.delete(1.0, tk.END)
                 self.probability_text.delete(1.0, tk.END)
-                
-                # Limpiar imágenes
                 self.xray_display.delete(1.0, tk.END)
                 self.heatmap_display.delete(1.0, tk.END)
-                
-                # Restablecer estado
                 self.current_image = None
                 self.buttons['predict']['state'] = 'disabled'
-                
                 messagebox.showinfo("Éxito", "Los datos se borraron correctamente")
                 
             except Exception as e:
