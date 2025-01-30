@@ -1,12 +1,12 @@
-# 
+# Usar una imagen base con Python 3.8
 FROM python:3.8-slim-buster
 
-#  Variables de entorno 
+# Variables de entorno
 ENV PYTHONUNBUFFERED=1
 ENV DISPLAY=:0
 ENV PYTHONPATH=/app
 
-# Establecer el directorio de trabajo
+# Establecer directorio de trabajo
 WORKDIR /app
 
 # Instalar dependencias del sistema necesarias
@@ -17,13 +17,13 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-#  Actualizar pip
+# Actualizar pip
 RUN python -m pip install --upgrade pip
 
-# Copiar los archivos de requerimientos
+# Copiar requirements.txt
 COPY requirements.txt .
 
-#  dependencias de Python sin caché para reducir tamaño de la imagen
+# Instalar dependencias de Python sin caché para reducir tamaño de la imagen
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copiar todo el código y el modelo al contenedor
