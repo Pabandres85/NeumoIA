@@ -37,26 +37,10 @@ Para garantizar que el sistema funcione en un entorno controlado, se utilizó Do
 ## 3. Funciones
 
 
-## model_fun
+## def from_file
 
-def model_fun():
-    """Load and return the trained neural network model"""
-    try:
-        # Load your saved model - update the path to where your model is stored
-        model = tf.keras.models.load_model('path_to_your_model.h5')
-        return model
-    except Exception as e:
-        print(f"Error loading model: {e}")
-        return None
-        
-La función model_fun carga un modelo de red neuronal desde un archivo especifico y devuelve el modelo cargado si todo va bien. Si ocurre algún error durante la carga del modelo, se captura la excepción, se imprime un mensaje de error y la función devuelve None.
-## Inclusión de Funciones Adicionales
-Adicionalmente, se incluyó una función para leer imágenes en formato JPG, que no estaba presente en el código original.
+La función from_file es un método de clase que crea una instancia de ChestXray a partir de un archivo de imagen. Maneja dos tipos de formatos: DICOM (formato especializado para imágenes médicas) y JPG/PNG. Para archivos DICOM, realiza una serie de transformaciones para normalizar la imagen: la convierte a escala de grises, la normaliza a valores entre 0 y 255, y finalmente la convierte a formato RGB. Para archivos JPG/PNG, simplemente lee la imagen directamente. En ambos casos, crea y retorna un nuevo objeto ChestXray con el ID del paciente, la imagen procesada y el tipo de imagen correspondiente.
 
-if filepath.endswith(".dcm"):
-                self.array, img2show = read_dicom_file(filepath)
-            else:
-                self.array, img2show = read_jpg_file(filepath)
 
 Las versiones que se utilizaron finalmente para la implementación del proyecto son las siguientes:
 
