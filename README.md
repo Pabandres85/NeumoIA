@@ -3,12 +3,20 @@
 
 ## Grupo 3
 ## Integrantes: 
+
+
 Pablo Andrés Muñoz Martínez 
                 Código: 2244676 
+
+
 Lady Yasmin Hoyos Parra 
                 Código: 2245224 
-Johan David Mendoza Vargas 
+
+
+Johan David Mendoza Vargas
                 Código: 2245019
+
+
 Yineth Tatiana Hernández Narvaez 
                 Código: 2244789 
 
@@ -26,24 +34,7 @@ El primer paso fue clonar el repositorio proporcionado que nos permitió obtener
 ## 2. Configuración del Entorno con Docker
 Para garantizar que el sistema funcione en un entorno controlado, se utilizó Docker. Esto permitió desplegar el sistema en un entorno aislado y asegurar que todas las dependencias estuvieran correctamente instaladas.
 
-## 3. Implementación del Código con Arquitectura en Capas
-El repositorio ya contenía parte del código desarrollado, por lo que la tarea principal fue completar las funciones faltantes. Las principales tareas realizadas fueron:
-## Descripción Inicial del Código
-Se proporciona una breve descripción del estado inicial del código antes de las modificaciones implementadas, incluyendo la estructura y funcionalidad básica.
-## Arquitectura de Archivos Propuesta
-detector_neumonia.py Contiene el diseño de la interfaz gráfica utilizando Tkinter. Los botones llaman métodos contenidos en otros scripts.
-## integrator.py
- Es un módulo que integra los demás scripts y retorna solamente lo necesario para ser visualizado en la interfaz gráfica. Retorna la clase, la probabilidad y una imagen con el mapa de calor generado por Grad-CAM.
-## read_img.py
- Script que lee la imagen en formato DICOM para visualizarla en la interfaz gráfica. Además, la convierte a un arreglo para su preprocesamiento.
-## preprocess_img.py 
-Script que recibe el arreglo proveniente de read_img.py y realiza las siguientes modificaciones: redimensiona a 512x512 píxeles, conversión a escala de grises, ecualización del histograma con CLAHE, normalización de la imagen entre 0 y 1, conversión del arreglo de imagen a formato de batch (tensor).
-## load_model.py Script 
-que lee el archivo binario del modelo de red neuronal convolucional previamente entrenado llamado 'WilhemNet86.h5'.
-## grad_cam.py Script
- que recibe la imagen, la procesa, carga el modelo, obtiene la predicción y la capa convolucional de interés para extraer las características relevantes de la imagen.
-## read_img.py
-Se agregaron funciones y se especificaron las versiones de las librerías requeridas para el correcto funcionamiento del código.
+## 3. Funciones
 
 
 ## model_fun
@@ -69,11 +60,11 @@ if filepath.endswith(".dcm"):
 
 Las versiones que se utilizaron finalmente para la implementación del proyecto son las siguientes:
 
-![Requeriments](C:\Users\guita\OneDrive\Escritorio\Neumon\UAO-Neumonia\images_readme\Requeriment.jpg)
+![Requeriments](images_readme/Requeriment.jpg)
 
 También se implementó el dockerfile que define un entorno de contenedor y configura un entorno reproducible para ejecutar la aplicación de Python, incluyendo todas las dependencias del sistema y las librerías necesarias, y establece un comando para iniciar la aplicación al correr el contenedor
 
-## Implementación de un patrón de diseño 
+# 4 Implementación de un patrón de diseño 
 Para facilitar el desarrollo y las pruebas unitarias, se implementó un diseño de arquitectura en capas. Este enfoque permite separar las responsabilidades del sistema en diferentes componentes, lo que hace que el código sea más modular, mantenible y fácil de probar. Las capas implementadas fueron:
 
 Capa de Presentación: Encargada de la interacción con el usuario, como la carga y visualización de imágenes.
@@ -82,7 +73,7 @@ Capa de Acceso a Datos: Gestiona la carga y el procesamiento de las imágenes de
 
 Esta separación en capas permitió realizar pruebas unitarias de manera más eficiente, ya que cada capa pudo ser probada de forma independiente.
 
-![Estructura](C:\Users\guita\OneDrive\Escritorio\Neumon\UAO-Neumonia\images_readme\EstructuraProyecto.jpg)
+![Estructura](images_readme/EstructuraProyecto.jpg)
 
 La estructura de este  proyecto implementa una arquitectura por capas para un sistema de detección de neumonía usando IA. Vamos a desglosar cada capa y su propósito:
 
@@ -99,6 +90,9 @@ diagnosis_service.py: Maneja el flujo del proceso de diagnóstico, coordinando e
 Define las entidades centrales del negocio
 chest_xray.py: Representa la radiografía de tórax
 diagnosis_result.py: Modela el resultado del diagnóstico
+
+## Carpeta image/:
+Contiene las imagenes se usan en el readme 
 
 
 ## Capa de Infraestructura (infrastructure/)
@@ -146,15 +140,18 @@ README.md: Documentación del proyecto
 - Organización clara para nuevos desarrolladores que se unan al proyecto
 
 
-## 4. Pruebas Unitarias
+## 5. Pruebas Unitarias
 Las pruebas se enfocaron en las siguientes funciones:
 
-Prueba de Carga de Imágenes: Se verificó que la función de carga de imágenes maneje correctamente archivos válidos y no válidos.
+Prueba en diagnosis_service: Se verificó que la funciones se ejecuten de manera eficiente.
+Prueba en chest_xray: se hicieron pruebas de carga de archivos jpge y Dicom para que estuviera bien su funcionamiento
 
-Prueba de Predicción: Se validó que el algoritmo de predicción devuelva resultados consistentes para diferentes tipos de imágenes.
 
-![Pantallazo](C:\Users\guita\OneDrive\Escritorio\Neumon\UAO-Neumonia\images_readme\Pantallazo.jpg)
+![Pantallazo](images_readme/Pantallazo.jpg)
 
 ## 5. Despliegue 
-Una vez completado el código y las pruebas, se desplegó el sistema en un entorno local utilizando Docker. Se realizaron pruebas manuales para asegurar que todas las funcionalidades estuvieran operativas.
+Una vez completado el código y las pruebas, se desplegó el sistema en un entorno local con linux utilizando Docker para luego crear una imagen en un contenedor para que se ejecute el proyecto, de acuerdo a esto se sube contenedor a docker hub, el cual se puede ver en el siguiente link: 
+[linkDockerHub](https://hub.docker.com/repository/docker/pabandres13/pneumonia-detector/general)
+
+
 
