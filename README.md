@@ -147,9 +147,10 @@ Prueba en diagnosis_service: Se verificó que la funciones se ejecuten de manera
 Prueba en chest_xray: se hicieron pruebas de carga de archivos jpge y Dicom para que estuviera bien su funcionamiento
 
 
+## 5. Despliegue 
+
 ![Pantallazo](images_readme/Pantallazo.jpg)
 
-## 5. Despliegue 
 Una vez completado el código y las pruebas, se desplegó el sistema en un entorno local con linux utilizando Docker para luego crear una imagen en un contenedor para que se ejecute el proyecto, de acuerdo a esto se sube contenedor a docker hub, el cual se puede ver en el siguiente link: 
 [linkDockerHub](https://hub.docker.com/repository/docker/pabandres13/pneumonia-detector/general)
 
