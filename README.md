@@ -1,142 +1,127 @@
 
-## Proyecto deteccion neumonia con IA 
+---
 
-## Grupo 3
-## Integrantes: 
+# 🏥 Pneumonia Detection System
 
+## 📌 Introducción
 
-Pablo Andrés Muñoz Martínez 
-                Código: 2244676 
+Este proyecto tiene como objetivo principal desarrollar un sistema basado en **inteligencia artificial (IA)** para la identificación de **neumonía** en imágenes de radiografías de tórax. Para ello, se partió de un repositorio proporcionado, que contenía parte del código y la estructura necesaria para el sistema.
 
+Este documento describe los pasos implementados para completar el código, asegurar su correcto funcionamiento y garantizar la calidad del sistema mediante **pruebas unitarias**. Además, se incluyen las soluciones aplicadas para alcanzar los objetivos del proyecto.
 
-Lady Yasmin Hoyos Parra 
-                Código: 2245224 
+---
 
+## ✅ Pasos Realizados
 
-Johan David Mendoza Vargas
-                Código: 2245019
+### 🔹 1. Clonación del Repositorio
 
+El primer paso fue **clonar el repositorio** proporcionado, lo que permitió obtener una copia local del proyecto en el entorno de desarrollo.
 
-Yineth Tatiana Hernández Narvaez 
-                Código: 2244789 
+### 🔹 2. Configuración del Entorno con Docker 🐳
 
+Para garantizar que el sistema funcione en un entorno controlado, se utilizó **Docker**. Esto permitió desplegar el sistema en un entorno aislado y asegurar que todas las dependencias estuvieran correctamente instaladas.
 
-## Introducción
+### 🔹 3. Funciones Implementadas ⚙️
 
-Este proyecto tiene como objetivo principal desarrollar un sistema basado en inteligencia artificial (IA) que permita identificar la presencia de neumonía en imágenes de radiografías de tórax. Para dicho objetivo se basó en un repositorio proporcionado, el cual contenía parte del código y la estructura necesaria para el sistema. 
-En este documento, describe los pasos que se implementaron para completar el código, asegurar su correcto funcionamiento y garantizar la calidad del sistema mediante pruebas unitarias. Además, se incluyen las soluciones implementadas para alcanzar el objetivo del proyecto.
+#### 🔹 `from_file`
 
-## Pasos Realizados
+La función `from_file` es un método de clase que crea una instancia de `ChestXray` a partir de un archivo de imagen. Maneja dos formatos principales:
 
-## 1. Clonación del Repositorio
-El primer paso fue clonar el repositorio proporcionado que nos permitió obtener una copia local del proyecto en el entorno de desarrollo.
+- 📌 **DICOM**: Formato especializado para imágenes médicas. La imagen se convierte a escala de grises, se normaliza a valores entre 0 y 255 y finalmente se transforma a formato RGB.
+- 📌 **JPG/PNG**: Se lee directamente la imagen sin modificaciones adicionales.
 
-## 2. Configuración del Entorno con Docker
-Para garantizar que el sistema funcione en un entorno controlado, se utilizó Docker. Esto permitió desplegar el sistema en un entorno aislado y asegurar que todas las dependencias estuvieran correctamente instaladas.
+En ambos casos, se genera y retorna un objeto `ChestXray` con el ID del paciente, la imagen procesada y el tipo de imagen correspondiente.
 
-## 3. Funciones
+📌 **Las versiones utilizadas en la implementación del proyecto fueron las siguientes:**
 
+![📝 Requerimientos](images_readme/Requeriment.jpg)
 
-## def from_file
+También se implementó un **`Dockerfile`**, que define un entorno de contenedor para ejecutar la aplicación de Python, incluyendo todas las dependencias necesarias y estableciendo un comando de inicio para la ejecución del sistema.
 
-La función from_file es un método de clase que crea una instancia de ChestXray a partir de un archivo de imagen. Maneja dos tipos de formatos: DICOM (formato especializado para imágenes médicas) y JPG/PNG. Para archivos DICOM, realiza una serie de transformaciones para normalizar la imagen: la convierte a escala de grises, la normaliza a valores entre 0 y 255, y finalmente la convierte a formato RGB. Para archivos JPG/PNG, simplemente lee la imagen directamente. En ambos casos, crea y retorna un nuevo objeto ChestXray con el ID del paciente, la imagen procesada y el tipo de imagen correspondiente.
+---
 
+## 🏗️ 4. Implementación de un Patrón de Diseño
 
-Las versiones que se utilizaron finalmente para la implementación del proyecto son las siguientes:
+Para facilitar el desarrollo y las pruebas unitarias, se implementó una **arquitectura en capas**. Este enfoque permite separar las responsabilidades del sistema en diferentes componentes, haciendo que el código sea más modular, mantenible y fácil de probar. 
 
-![Requeriments](images_readme/Requeriment.jpg)
+📌 **Las capas implementadas fueron:**
 
-También se implementó el dockerfile que define un entorno de contenedor y configura un entorno reproducible para ejecutar la aplicación de Python, incluyendo todas las dependencias del sistema y las librerías necesarias, y establece un comando para iniciar la aplicación al correr el contenedor
+- 🎨 **Capa de Presentación**: Maneja la interfaz de usuario, permitiendo la carga y visualización de imágenes.
+- 🧠 **Capa de Lógica de Negocio**: Contiene el algoritmo de predicción de neumonía y la lógica principal del sistema.
+- 📂 **Capa de Acceso a Datos**: Gestiona la carga y el procesamiento de las imágenes de radiografías.
 
-# 4 Implementación de un patrón de diseño 
-Para facilitar el desarrollo y las pruebas unitarias, se implementó un diseño de arquitectura en capas. Este enfoque permite separar las responsabilidades del sistema en diferentes componentes, lo que hace que el código sea más modular, mantenible y fácil de probar. Las capas implementadas fueron:
+Esta separación en capas permitió realizar pruebas unitarias de manera más eficiente, ya que cada componente pudo ser evaluado de forma independiente.
 
-Capa de Presentación: Encargada de la interacción con el usuario, como la carga y visualización de imágenes.
-Capa de Lógica de Negocio: Contiene el algoritmo de predicción de neumonía y la lógica principal del sistema.
-Capa de Acceso a Datos: Gestiona la carga y el procesamiento de las imágenes de radiografías.
+📌 **Estructura del proyecto:**
 
-Esta separación en capas permitió realizar pruebas unitarias de manera más eficiente, ya que cada capa pudo ser probada de forma independiente.
+![📂 Estructura](images_readme/EstructuraProyecto.jpg)
 
-![Estructura](images_readme/EstructuraProyecto.jpg)
+📌 **A continuación, se describen las capas y su propósito en detalle:**
 
-La estructura de este  proyecto implementa una arquitectura por capas para un sistema de detección de neumonía usando IA. Vamos a desglosar cada capa y su propósito:
+### 📌 Capa de Aplicación (`application/`)
 
-## Capa de Aplicación (application/)
+📂 Contiene los servicios que coordinan la lógica de negocio:
+- `diagnosis_service.py`: Maneja el flujo del proceso de diagnóstico, coordinando entre el procesamiento de imágenes y el modelo de IA.
 
+### 📌 Capa de Dominio (`domain/`)
 
-Contiene los servicios que coordinan la lógica de negocio
-diagnosis_service.py: Maneja el flujo del proceso de diagnóstico, coordinando entre el procesamiento de imágenes y el modelo de IA
+📂 Define las entidades centrales del negocio:
+- `chest_xray.py`: Representa la radiografía de tórax.
+- `diagnosis_result.py`: Modela el resultado del diagnóstico.
 
+### 📌 Capa de Infraestructura (`infrastructure/`)
 
-## Capa de Dominio (domain/)
+📂 Implementa los detalles técnicos y la integración con tecnologías específicas:
+- `dicom_reader.py`: Lee imágenes en formato DICOM.
+- `image_preprocessor.py`: Prepara las imágenes para el modelo de IA.
 
+### 📌 Carpeta `ml/`
 
-Define las entidades centrales del negocio
-chest_xray.py: Representa la radiografía de tórax
-diagnosis_result.py: Modela el resultado del diagnóstico
+📂 Contiene los modelos de IA utilizados:
+- `cnn_model.py`: Implementa la red neuronal convolucional para la detección de neumonía.
 
-## Carpeta image/:
-Contiene las imagenes se usan en el readme 
+### 📌 Capa de Presentación (`presentation/`)
 
+📂 Maneja la interfaz de usuario:
+- `main_window.py`: Implementa la interfaz gráfica principal.
 
-## Capa de Infraestructura (infrastructure/)
+### 📌 Pruebas (`tests/`)
 
+📂 Contiene la estructura de pruebas unitarias para cada componente principal.
 
-Implementa los detalles técnicos y la integración con tecnologías específicas
-## Carpeta image/:
+### 📌 Archivos Principales 📑
 
-dicom_reader.py: Lee imágenes en formato DICOM (formato estándar médico)
-image_preprocessor.py: Prepara las imágenes para el modelo de IA
+- `detector_neumonia.py` → Punto de entrada principal de la aplicación.
+- `requirements.txt` → Lista de dependencias del proyecto.
+- `README.md` → Documentación del proyecto.
+- `.gitignore` → Archivos y carpetas que deben ser ignorados por Git.
 
+📌 **Beneficios de esta Arquitectura por Capas:**
 
-## Carpeta ml/:
+✔️ Separación clara de responsabilidades.
+✔️ Facilita el mantenimiento y la escalabilidad del sistema.
+✔️ Permite modificar o reemplazar componentes sin afectar otras partes del código.
+✔️ Proporciona una estructura clara para nuevos desarrolladores que se integren al proyecto.
 
-cnn_model.py: Implementa la red neuronal convolucional para la detección
+---
 
+## 🧪 5. Pruebas Unitarias
 
+📌 **Las pruebas se centraron en las siguientes funcionalidades clave:**
 
+- ✅ `diagnosis_service.py`: Se verificó que las funciones de diagnóstico se ejecutaran de manera eficiente y precisa.
+- ✅ `chest_xray.py`: Se realizaron pruebas de carga de archivos en formatos JPG y DICOM para validar su correcto procesamiento.
 
-## Capa de Presentación (presentation/)
+---
 
+## 🚀 6. Despliegue
 
-Maneja la interfaz de usuario
-main_window.py: Implementa la interfaz gráfica principal
+📸 **Pantallazo de la aplicación:**
 
+![🖼️ Pantallazo](images_readme/Pantallazo.jpg)
 
-## Pruebas (tests/)
+📌 Una vez finalizado el desarrollo y las pruebas, el sistema fue **desplegado en un entorno local con Linux** utilizando Docker. Posteriormente, se creó una imagen del contenedor y se subió a **Docker Hub**, donde puede ser accedido mediante el siguiente enlace:
 
+🔗 [Repositorio en Docker Hub](https://hub.docker.com/repository/docker/pabandres13/pneumonia-detector/general)
 
-Estructura de pruebas que refleja la estructura del proyecto
-Incluye pruebas unitarias para cada componente principal
-
-## Archivos Principales:
-
-detector_neumonia.py: Punto de entrada principal de la aplicación
-requirements.txt: Lista las dependencias del proyecto
-README.md: Documentación del proyecto
-.gitignore: Especifica archivos que Git debe ignorar
-
-## Esta arquitectura por capas ofrece varios beneficios:
-
-- Separación clara de responsabilidades
-- Facilita el mantenimiento y las pruebas
-- Permite cambiar componentes sin afectar otras partes del sistema
-- Organización clara para nuevos desarrolladores que se unan al proyecto
-
-
-## 5. Pruebas Unitarias
-Las pruebas se enfocaron en las siguientes funciones:
-
-Prueba en diagnosis_service: Se verificó que la funciones se ejecuten de manera eficiente.
-Prueba en chest_xray: se hicieron pruebas de carga de archivos jpge y Dicom para que estuviera bien su funcionamiento
-
-
-## 5. Despliegue 
-
-![Pantallazo](images_readme/Pantallazo.jpg)
-
-Una vez completado el código y las pruebas, se desplegó el sistema en un entorno local con linux utilizando Docker para luego crear una imagen en un contenedor para que se ejecute el proyecto, de acuerdo a esto se sube contenedor a docker hub, el cual se puede ver en el siguiente link: 
-[linkDockerHub](https://hub.docker.com/repository/docker/pabandres13/pneumonia-detector/general)
-
-
-
+---
